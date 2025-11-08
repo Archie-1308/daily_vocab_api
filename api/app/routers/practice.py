@@ -21,4 +21,9 @@ def validate_sentence(
     # Get word data
     # Mock AI validation
     # Save to database
-    ...
+    return ValidateSentenceRequest(
+        score=85,
+        level="Intermediate",
+        suggestion="Good job! Your sentence is mostly correct but could be improved for clarity.",
+        corrected_sentence="This is the corrected sentence."
+    )
