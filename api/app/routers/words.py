@@ -29,3 +29,31 @@ def get_random_word(db: Session = Depends(get_db)):
     
     random_word = random.choice(words)
     return random_word
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+import random
+import logging
+
+from app.models import Word
+from app.schemas import WordResponse
+from app.database import get_db
+
+# Logger
+logger = logging.getLogger("vocab_api")
+
+router = APIRouter()
+
+@router.get("/word", response_model=WordResponse)
+def get_random_word(db: Session = Depends(get_db)):
+    try:
+        words = db.query(Word).all()
+        if not words:
+            raise HTTPException(status_code=404, detail="No words available in database.")
+        
+        random_word = random.choice(words)
+        return random_word
+    
+    except Exception as e:
+        logger.exception(f"Failed to fetch random word: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")

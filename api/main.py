@@ -6,6 +6,12 @@ from app.routers import practice
 from app.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware 
 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 Base.metadata.create_all(bind=engine)
 
 # Initialize FastAPI app
@@ -22,6 +28,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+@app.middleware("http")
+async def log_exceptions(request: Request, call_next):
+    try:
+        response = await call_next(request)
+        return response
+    except Exception as e:
+        logger.exception(f"Exception during request {request.url.path}: {e}")
+        return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
+
 
 # Include routers 
 app.include_router(words.router, prefix="/api", tags=["words"])

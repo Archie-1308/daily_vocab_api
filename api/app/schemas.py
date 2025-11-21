@@ -2,13 +2,12 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List
 
-
 class WordResponse(BaseModel):
     id: int
     word: str
     definition: str
     difficulty_level: str
-    
+
     class Config:
         from_attributes = True
 
@@ -19,10 +18,13 @@ class ValidateSentenceRequest(BaseModel):
 
 
 class ValidateSentenceResponse(BaseModel):
-    score: float
+    score: float  # changed from Decimal
     level: str
     suggestion: str
     corrected_sentence: str
+
+    class Config:
+        from_attributes = True
 
 
 class SummaryResponse(BaseModel):
@@ -36,7 +38,7 @@ class HistoryItem(BaseModel):
     id: int
     word: str
     user_sentence: str
-    score: float
+    score: float  # changed from Decimal
     feedback: str
     practiced_at: datetime
 
